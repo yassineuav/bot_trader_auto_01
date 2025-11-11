@@ -3,7 +3,11 @@
 import useSWR from "swr";
 import axios from "axios";
 
-const fetcher = (url: string) => axios.get(url).then((res) => res.data);
+const fetcher = (url: string) => 
+  axios.get(url).then((res) => res.data).catch((err) => {
+    console.error("Fetch error:", err);
+    return { pnlToday: 0, openPositions: 0, signals: 0 };
+  });
 
 export default function SummaryCards() {
   const { data } = useSWR("/api/dashboard/kpis", fetcher);

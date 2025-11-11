@@ -3,7 +3,18 @@
 import useSWR from "swr";
 import axios from "axios";
 
-const fetcher = (url: string) => axios.get(url).then((res) => res.data);
+const fetcher = (url: string) => 
+  axios.get(url).then((res) => res.data).catch((err) => {
+    console.error("Fetch error:", err);
+    return {
+      account_value: 0,
+      cash: 0,
+      buying_power: 0,
+      equity: 0,
+      account_number: "N/A",
+      status: "error",
+    };
+  });
 
 interface AccountData {
   account_value: number;
