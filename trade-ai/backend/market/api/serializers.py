@@ -61,3 +61,17 @@ class PatternSnapshotSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.PatternSnapshot
         fields = "__all__"
+
+
+class AccountSummarySerializer(serializers.Serializer):
+    """Serializer for Alpaca account summary data"""
+    status = serializers.CharField()
+    account_number = serializers.CharField()
+    account_value = serializers.FloatField()
+    cash = serializers.FloatField()
+    buying_power = serializers.FloatField()
+    day_trading_buying_power = serializers.FloatField()
+    equity = serializers.FloatField()
+    last_equity = serializers.FloatField()
+    multiplier = serializers.CharField()
+    shorting_enabled = serializers.BooleanField()

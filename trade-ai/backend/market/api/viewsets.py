@@ -16,6 +16,7 @@ from ..news import ingest
 from ..signals import generator
 from ..trading import executor
 from ..ml import patterns
+from ..alpaca.client import AlpacaClient
 from scripts import backtest_runner
 
 
@@ -111,3 +112,19 @@ class BacktestDetailView(generics.GenericAPIView):
         if not record:
             return Response({"detail": "Not found"}, status=status.HTTP_404_NOT_FOUND)
         return Response(record)
+
+
+class AccountView(generics.GenericAPIView):
+    """API endpoint to retrieve Alpaca account information"""
+
+    def get(self, request) -> Response:
+        client = AlpacaClient()
+        account_data = client.get_account_summary()
+        if not account_data:
+            return Response(
+                {"error": "Failed to fetch account data"},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+        serializer = serializers.AccountSummarySerializer(account_data)
+        return Response(serializer.data)
+

@@ -24,4 +24,5 @@ urlpatterns = [
     path("api/trading/execute/", market_viewsets.ExecuteSignalView.as_view(), name="execute-signal"),
     path("api/backtest/run/", market_viewsets.BacktestTriggerView.as_view(), name="backtest-run"),
     path("api/backtest/<uuid:pk>/", market_viewsets.BacktestDetailView.as_view(), name="backtest-detail"),
+    path("api/account/", market_viewsets.AccountView.as_view(), name="account"),
 ]
