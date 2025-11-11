@@ -26,8 +26,16 @@ class AlpacaClient:
             "Content-Type": "application/json",
         }
 
+    def _is_configured(self) -> bool:
+        """Check if API credentials are configured"""
+        return bool(self.api_key and self.secret_key)
+
     def get_account(self) -> Optional[Dict[str, Any]]:
         """Fetch account details from Alpaca API"""
+        if not self._is_configured():
+            logger.warning("Alpaca API credentials not configured")
+            return None
+
         cache_key = "alpaca_account"
         cached = cache.get(cache_key)
         if cached:
@@ -68,14 +76,15 @@ class AlpacaClient:
             return None
 
         return {
-            "status": account.get("status"),
-            "account_number": account.get("account_number"),
+            "status": account.get("status", "unknown"),
+            "account_number": account.get("account_number", "N/A"),
             "account_value": float(account.get("portfolio_value", 0)),
             "cash": float(account.get("cash", 0)),
             "buying_power": float(account.get("buying_power", 0)),
             "day_trading_buying_power": float(account.get("daytrading_buying_power", 0)),
             "equity": float(account.get("equity", 0)),
             "last_equity": float(account.get("last_equity", 0)),
-            "multiplier": account.get("multiplier"),
+            "multiplier": account.get("multiplier", 1),
             "shorting_enabled": account.get("shorting_enabled", False),
         }
+

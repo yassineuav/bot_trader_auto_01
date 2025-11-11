@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import datetime as dt
+import logging
 from uuid import uuid4
 
 from django.utils import timezone
@@ -18,6 +19,8 @@ from ..trading import executor
 from ..ml import patterns
 from ..alpaca.client import AlpacaClient
 from scripts import backtest_runner
+
+logger = logging.getLogger(__name__)
 
 
 class ArticleViewSet(viewsets.ReadOnlyModelViewSet):
@@ -119,12 +122,45 @@ class AccountView(generics.GenericAPIView):
 
     def get(self, request) -> Response:
         client = AlpacaClient()
+        
+        # Check if API credentials are configured
+        if not client._is_configured():
+            logger.warning("Alpaca API credentials not configured")
+            return Response(
+                {
+                    "status": "not_configured",
+                    "account_number": "N/A",
+                    "account_value": 0,
+                    "cash": 0,
+                    "buying_power": 0,
+                    "day_trading_buying_power": 0,
+                    "equity": 0,
+                    "last_equity": 0,
+                    "multiplier": 1,
+                    "shorting_enabled": False,
+                },
+                status=status.HTTP_200_OK,
+            )
+        
         account_data = client.get_account_summary()
         if not account_data:
+            logger.error("Failed to retrieve account data from Alpaca")
             return Response(
-                {"error": "Failed to fetch account data"},
-                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+                {
+                    "status": "unavailable",
+                    "account_number": "N/A",
+                    "account_value": 0,
+                    "cash": 0,
+                    "buying_power": 0,
+                    "day_trading_buying_power": 0,
+                    "equity": 0,
+                    "last_equity": 0,
+                    "multiplier": 1,
+                    "shorting_enabled": False,
+                },
+                status=status.HTTP_200_OK,
             )
+        
         serializer = serializers.AccountSummarySerializer(account_data)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
