@@ -7,9 +7,11 @@ from typing import List
 import dj_database_url
 from dotenv import load_dotenv
 
-load_dotenv()
-
+# Load environment variables from infra/.env
 BASE_DIR = Path(__file__).resolve().parent.parent
+PROJECT_ROOT = BASE_DIR.parent
+ENV_FILE = PROJECT_ROOT / "infra" / ".env"
+load_dotenv(dotenv_path=ENV_FILE)
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "change-me")
 DEBUG = os.environ.get("DJANGO_DEBUG", "false").lower() == "true"
 ALLOWED_HOSTS: List[str] = os.environ.get("DJANGO_ALLOWED_HOSTS", "*").split(",")
