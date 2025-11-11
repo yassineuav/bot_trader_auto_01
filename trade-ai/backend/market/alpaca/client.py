@@ -1,16 +1,15 @@
 from __future__ import annotations
 
 import logging
+import os
 from typing import Optional, Dict, Any
 
 import requests
 from django.core.cache import cache
 
-from market.utils.config import get_config_value
-
 logger = logging.getLogger(__name__)
 
-ALPACA_BASE_URL = "https://paper-api.alpaca.markets"
+ALPACA_BASE_URL = os.environ.get("ALPACA_BASE_URL", "https://paper-api.alpaca.markets")
 CACHE_TIMEOUT = 300  # 5 minutes
 
 
@@ -18,8 +17,8 @@ class AlpacaClient:
     """Client for interacting with Alpaca API"""
 
     def __init__(self):
-        self.api_key = get_config_value("ALPACA_API_KEY", "")
-        self.secret_key = get_config_value("ALPACA_SECRET_KEY", "")
+        self.api_key = os.environ.get("ALPACA_API_KEY", "")
+        self.secret_key = os.environ.get("ALPACA_API_SECRET", "")
         self.base_url = ALPACA_BASE_URL
         self.headers = {
             "APCA-API-KEY-ID": self.api_key,
