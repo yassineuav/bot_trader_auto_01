@@ -16,7 +16,7 @@ from ..news import ingest
 from ..signals import generator
 from ..trading import executor
 from ..ml import patterns
-from ..scripts import backtest_runner
+from scripts import backtest_runner
 
 
 class ArticleViewSet(viewsets.ReadOnlyModelViewSet):

@@ -47,7 +47,8 @@ services:
     build: ../frontend
     command: npm run dev
     volumes:
-      - ../frontend:/app
+      - ../frontend:/app           # map source for live reload
+      - /app/node_modules          # prevent overwriting node_modules
     ports:
       - "3000:3000"
     environment:
